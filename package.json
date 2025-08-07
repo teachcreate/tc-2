@@ -1,0 +1,19 @@
+{
+  "name": "teachcreate",
+  "version": "1.0.0",
+  "description": "TeachCreate - A full-stack application for teaching and learning",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd client && npm install && npm run build",
+    "start": "cd server && npm start",
+    "dev": "concurrently \"cd server && npm start\" \"cd client && npm start\"",
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "keywords": ["education", "teaching", "learning", "fullstack"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
