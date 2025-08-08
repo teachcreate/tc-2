@@ -17,6 +17,50 @@ CREATE TABLE users (
 );
 ```
 
+### Question Types
+```sql
+CREATE TABLE question_types (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL UNIQUE,
+  description TEXT,
+  is_gradable BOOLEAN NOT NULL,
+  supports_live_game BOOLEAN NOT NULL,
+  schema JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+### Game Sessions
+```sql
+CREATE TABLE game_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  product_id UUID REFERENCES products(id) NOT NULL,
+  creator_id UUID REFERENCES users(id) NOT NULL,
+  join_code TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('waiting', 'active', 'completed')),
+  settings JSONB NOT NULL,
+  started_at TIMESTAMPTZ,
+  ended_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+### LMS Integrations
+```sql
+CREATE TABLE lms_integrations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) NOT NULL,
+  provider TEXT NOT NULL CHECK (provider IN ('google_classroom', 'canvas', 'moodle')),
+  external_id TEXT NOT NULL,
+  access_token TEXT NOT NULL,
+  refresh_token TEXT,
+  expires_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(user_id, provider)
+);
+```
+
 ### Products
 ```sql
 CREATE TABLE products (
@@ -30,7 +74,13 @@ CREATE TABLE products (
   demo_url TEXT,
   is_published BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  -- New fields for question system
+  supports_grading BOOLEAN NOT NULL DEFAULT FALSE,
+  supports_live_game BOOLEAN NOT NULL DEFAULT FALSE,
+  question_types UUID[],
+  lms_integration_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+  settings JSONB
 );
 ```
 
@@ -83,3 +133,6 @@ erDiagram
     products ||--o{ reviews : "has"
     users ||--o{ reviews : "writes"
     products }o--o{ categories : "tagged_with"
+    products }o--|| question_types : "supports"
+    products ||--o{ game_sessions : "has"
+    users ||--o{ lms_integrations : "has"

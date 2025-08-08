@@ -1,6 +1,6 @@
-const supabase = require('../supabaseClient');
+import { supabase } from '../supabaseClient.js';
 
-const searchProducts = async (query) => {
+export const searchProducts = async (query) => {
   try {
     const { data, error } = await supabase
       .from('products')
@@ -21,5 +21,3 @@ const searchProducts = async (query) => {
     return [];
   }
 };
-
-module.exports = { searchProducts };

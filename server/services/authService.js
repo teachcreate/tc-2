@@ -1,6 +1,6 @@
-const supabase = require('../supabaseClient');
+import { supabase } from '../supabaseClient.js';
 
-const signupUser = async (email, password) => {
+export const signupUser = async (email, password) => {
   try {
     const { data, error } = await supabase.auth.signUp({
       email: email,
@@ -19,7 +19,7 @@ const signupUser = async (email, password) => {
   }
 };
 
-const signinUser = async (email, password) => {
+export const signinUser = async (email, password) => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
@@ -37,5 +37,3 @@ const signinUser = async (email, password) => {
     return { error };
   }
 };
-
-module.exports = { signupUser, signinUser };

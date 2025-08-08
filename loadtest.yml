@@ -1,0 +1,10 @@
+config:
+  target: 'https://teachcreate-staging.vercel.app'
+  phases:
+    - duration: 60
+      arrivalRate: 20
+scenarios:
+  - name: "Homepage Load Test"
+    flow:
+      - get:
+          url: "/"
